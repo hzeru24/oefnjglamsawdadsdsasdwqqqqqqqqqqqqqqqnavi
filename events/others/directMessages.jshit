@@ -1,0 +1,39 @@
+const {MessageActionRow, MessageButton, MessageEmbed, Collection} = require("discord.js") 
+const config = require("../../botconfig/main") 
+const client = require("../../index") 
+
+client.modmailThreads = new Collection(); 
+
+client.on("messageCreate", async (message) => {
+   if (message.author.bot || message.guild)return;
+
+  if(message.author.id ==! "845823982238564362") return;
+if(!message.guild) {
+  
+  const embed = new MessageEmbed()
+    .setTitle(message.author.username + ` has DM'd!`)
+    .setDescription(`${message.content}`)
+    .setTimestamp()
+    .setColor(`#36393F`)
+    .setFooter(`!reply ${message.author.id}`)
+  const mesg = `__**You have a message from ${message.author.tag}**__\n> ${message.content}\n\n\`!reply ${message.author.id}\``
+  
+
+  client.users.cache.get('845823982238564362').send({content: mesg})
+}
+
+  
+  if(message.author.id === "845823982238564362") {
+    
+  const prefix = "!";
+    let args = message.content.slice(prefix.length).trim().split(/ +/g);
+  let cmd = args.shift().toLowerCase();
+  if(cmd === "reply") {
+    const user = `${args[0]}`
+    client.users.cache.get(user).send(`${args.slice(1).join(" ")}`)
+  }
+
+  }
+  
+
+});

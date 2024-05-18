@@ -1,0 +1,128 @@
+const { MongoClient } = require('mongodb');
+const discordClient = require("../../index"); // Changed variable name to discordClient
+
+const words = new Set();
+let currentWord = '';
+
+discordClient.on('messageCreate', (message) => {
+  if (message.author.bot) return;
+
+  const content = message.content.trim().toLowerCase();
+
+  if (message.channel.id === "1138690141809016872") {
+    if (currentWord === '') {
+      currentWord = getRandomWord();
+      words.add(currentWord.toLowerCase());
+      message.channel.send(` ${currentWord}`);
+    } else if (content.startsWith(currentWord[currentWord.length - 1])) {
+      const newWord = content;
+
+      if (!validWords.has(newWord)) {
+        message.delete();
+      } else if (words.has(newWord)) {
+        message.react("❌");
+      } else {
+        message.react("✅");
+        currentWord = newWord;
+        words.add(newWord);
+        const nextWord = getRandomWordStartingWith(currentWord[currentWord.length - 1]);
+        currentWord = nextWord;
+        words.add(nextWord);
+        message.channel.send(` ${nextWord}`);
+        updateCurrentWordInDatabase(currentWord);
+      }
+    } else {
+      message.delete();
+    }
+  }
+  
+  const args = message.content.trim().split(/\s+/);
+  const command = args.shift().toLowerCase();
+
+  if (message.channel.id === "1138690141809016872" && command === "r!resetword") {
+    resetCurrentWord();
+    message.delete();
+    message.channel.send("The current word has been reset to **start**.");
+  }
+  
+});
+
+const validWords = new Set(discordClient.config.wordlist.map(word => word.toLowerCase()));
+
+async function initDatabase() {
+  const uri = discordClient.config.mongooseConnectionString;
+  const dbClient = new MongoClient(uri); // Changed variable name to dbClient
+
+  try {
+    await dbClient.connect();
+
+    const database = dbClient.db('wordgames');
+    const wordsCollection = database.collection('word');
+
+    const storedData = await wordsCollection.findOne();
+    if (storedData) {
+      currentWord = storedData.currentWord;
+      words.clear();
+      storedData.words.forEach(word => words.add(word));
+    } else {
+      currentWord = getRandomWord();
+      words.add(currentWord.toLowerCase());
+      await wordsCollection.insertOne({ currentWord, words: Array.from(words) });
+    }
+  } catch (error) {
+    console.error('Error initializing database:', error);
+  } finally {
+    dbClient.close();
+  }
+}
+
+async function updateCurrentWordInDatabase(newCurrentWord) {
+  const uri = discordClient.config.mongooseConnectionString;
+  const updateClient = new MongoClient(uri);
+
+  try {
+    await updateClient.connect();
+
+    const database = updateClient.db('wordgames');
+    const wordsCollection = database.collection('word');
+
+    await wordsCollection.updateOne({}, { $set: { currentWord: newCurrentWord } });
+  } catch (error) {
+    console.error('Error updating current word in database:', error);
+  } finally {
+    updateClient.close();
+  }
+}
+
+// Call initDatabase function on bot startup
+initDatabase();
+
+function getRandomWord() {
+  const wordsList = discordClient.config.wordlist.filter(word => /^[a-zA-Z]+$/.test(word) && !word.match(/[.\-']/)); // Excludes words with special characters
+  return wordsList[Math.floor(Math.random() * wordsList.length)];
+}
+
+function getRandomWordStartingWith(letter) {
+  const filteredWords = Array.from(validWords).filter(word => word.startsWith(letter));
+  return filteredWords[Math.floor(Math.random() * filteredWords.length)];
+}
+
+// Reset the currentWord
+function resetCurrentWord() {
+  currentWord = 'start';
+  updateCurrentWordInDatabase(currentWord);
+}
+
+// Additional command
+/*discordClient.on('messageCreate', (message) => {
+  if (message.author.bot) return;
+
+  const args = message.content.trim().split(/\s+/);
+  const command = args.shift().toLowerCase();
+
+  if (message.channel.id === "1138690141809016872" && command === "r!resetword") {
+    resetCurrentWord();
+    message.delete();
+    message.channel.send("The current word has been reset to **start**.");
+  }
+});*/

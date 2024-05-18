@@ -1,0 +1,33 @@
+const ows = require("../../schemas/ows"); 
+const client = require("../../index");
+const { words } = require('../../schemas/dictionary2.json');
+
+client.on('messageCreate', async message => {
+  const args = message.content.toLowerCase().split(' '); // Convert to lowercase
+
+  if (message.author.bot) return;
+
+  let owstory = await ows.findOne({
+    guild: message.guild.id
+  });
+
+  if (!owstory || !owstory.channel) return;
+
+  if (message.channel.id == owstory.channel) {
+    if (isNaN(message.content)) {
+      let nextWord = message.content.toLowerCase(); // Convert to lowercase
+
+      const wordExists = words.includes(nextWord);
+
+      if (nextWord === owstory.lastWord || message.author.id == owstory.lastUser || args.length > 1 || !wordExists) {
+        message.delete();
+      } else {
+        await ows.findOneAndUpdate(
+          { guild: message.guild.id },
+          { lastWord: nextWord, lastUser: message.author.id }
+        );
+        message.react('✅');
+      }
+    }
+  }
+});

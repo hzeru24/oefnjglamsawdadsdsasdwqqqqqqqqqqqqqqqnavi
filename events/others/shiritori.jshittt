@@ -1,0 +1,67 @@
+const { MongoClient } = require('mongodb');
+const client = require("../../index");
+
+const words = new Set();
+let currentWord = '';
+
+client.on('messageCreate', (message) => {
+  if (message.author.bot) return;
+
+  const content = message.content.trim().toLowerCase();
+
+  if (message.channel.id === "1138690141809016872") {
+    if (currentWord === '') {
+      currentWord = getRandomWord();
+      words.add(currentWord.toLowerCase());
+      message.channel.send(` ${currentWord}`);
+    } else if (content.startsWith(currentWord[currentWord.length - 1])) {
+      const newWord = content;
+
+      if (!validWords.has(newWord)) {
+        message.delete();
+      } else if (words.has(newWord)) {
+        message.react("❌");
+      } else {
+        currentWord = newWord;
+        words.add(newWord);
+        message.react("✅");
+      }
+    } else {
+      message.delete();
+    }
+  }
+});
+
+const validWords = new Set(client.config.wordlist.map(word => word.toLowerCase()));
+
+async function initDatabase() {
+  const uri = client.config.mongooseConnectionString
+  const client = new MongoClient(uri);
+
+  try {
+    await client.connect();
+    console.log('Connected to MongoDB');
+
+    const database = client.db('wordgame');
+    const wordsCollection = database.collection('words');
+
+    const storedData = await wordsCollection.findOne();
+    if (storedData) {
+      currentWord = storedData.currentWord;
+      words.clear();
+      storedData.words.forEach(word => words.add(word));
+    } else {
+      currentWord = getRandomWord();
+      words.add(currentWord.toLowerCase());
+    }
+  } catch (error) {
+    console.error('Error initializing database:', error);
+  } finally {
+    client.close();
+  }
+}
+
+function getRandomWord() {
+  const wordsList = client.config.wordlist;
+  return wordsList[Math.floor(Math.random() * wordsList.length)];
+}

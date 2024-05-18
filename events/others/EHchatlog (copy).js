@@ -1,0 +1,31 @@
+const {MessageActionRow, MessageButton, MessageEmbed, MessageAttachment} = require("discord.js")
+const client = require("../../index") 
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return;
+  if (!message.guild) return;
+  
+  const { WebhookClient, MessageEmbed } = require("discord.js");
+  // https://discord.com/api/webhooks/1060748962686058576/lr8xWvQMKZJMxmUFx0gR8Z-v8dd4uvxTBLGKsK2R_aLebbDDsI3FgBE-FeAwMgqxvnUv    https://discord.com/api/webhooks/1002561685682409472/vy2FBV1UD4qWhTZG2Aw-OhTObDrQbiYSrKRm_qtTOrai9jCHiiflHgdIVEvDyKj2ODn7
+
+  //https://discord.com/api/webhooks/1002561685682409472/vy2FBV1UD4qWhTZG2Aw-OhTObDrQbiYSrKRm_qtTOrai9jCHiiflHgdIVEvDyKj2ODn7
+  const webhook = new WebhookClient({
+  id : "1002561685682409472", //id of webhook
+  token : "vy2FBV1UD4qWhTZG2Aw-OhTObDrQbiYSrKRm_qtTOrai9jCHiiflHgdIVEvDyKj2ODn7" //webhook token
+  }) //https://discord.com/api/webhooks/1002561685682409472/vy2FBV1UD4qWhTZG2Aw-OhTObDrQbiYSrKRm_qtTOrai9jCHiiflHgdIVEvDyKj2ODn7
+  
+  if(message.channel.id === '839480179084886016') {
+    if (message.webhookID) return;
+    webhook.send({
+  username : `${message.member.displayName} (${message.member.id})`, //you can remove this for webhook's default name 
+  avatarURL : `${message.author.displayAvatarURL()}`, //you can remove this for webhook's default avatar
+  content : `${message.content}` || `${message.attachments.first()?.proxyURL}` || `${message.content} ${message.attachments.first()?.proxyURL}` || `${[message.stickers.first()]}` || null,
+  embeds : [], //optional (users can't send embeds anyway 😂)
+  files: null, //optional || I put the attachments in content instead (I keep getting errors when I put it here but you can  use this if you'd like)
+  allowedMentions: { "users" : [], "roles": []}}).then(() => {
+  console.log(`${message.author.tag} sent something in ${message.channel.name}!`);
+}).catch((e) => {
+  console.warn(`Failed to send.\n`);
+  console.log(e.stack ? e.stack : e);
+})
+  }
+})

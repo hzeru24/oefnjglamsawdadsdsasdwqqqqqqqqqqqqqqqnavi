@@ -1,0 +1,41 @@
+const client = require("../../index");
+const { MessageEmbed } = require("discord.js");
+const schema = require("../../schemas/sameletter")
+
+client.on("messageCreate", async (message) => {
+  if(message.author.bot) return;
+  if(message.author.id === client.user.id) return;
+  let data;
+    try {
+      data = await schema.findOne({
+        channelId: message.channel.id,
+        guildId: message.guild.id,
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  const lets = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+  const letters = lets[Math.floor(Math.random() * lets.length)];
+  
+      if(data.able === true) {
+        message.channel.send({content: "Type a word that starts and ends with: " + `**${letters}**`})
+        const reg = new RegExp(`/\b([${letters}])[${letters}]*\1\b/g`)
+        if(message.content.match(reg)) {
+          message.react("✅")
+          try {
+            await data.findOneAndUpdate(
+        {
+          userId: message.author.id,
+        },
+              {
+          $inc: {
+            score: + 1,
+          },
+        }
+              )} catch (err) {
+      console.log(err);
+    }
+          }
+        }
+      }
+})
