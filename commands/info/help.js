@@ -1,0 +1,233 @@
+const paginate = require("../../function/pagination")
+const { MessageEmbed } = require("discord.js")
+const { blank } = require("../../botconfig/main.json")
+const { prefix } = require("../../botconfig/main.json")
+
+module.exports = {
+  name: "help",
+  run: async (client, message, args) => {
+    const embedhelp = new MessageEmbed()
+      .setAuthor({ name: `${client.user.username}` + " 's Help Menu", iconURL: `${client.user.displayAvatarURL({ dynamic: true })}` })
+      .setDescription(`\`\`\`xml\n<Usage : ${prefix}help <command> >\`\`\`\nEnter \`${prefix}commands\` for all available commands or \`${prefix}help all\` for every command's information`)
+      .setColor(`${blank}`)
+      .setTimestamp()
+    if (!args[0]) return message.channel.send({ embeds: [embedhelp] })
+
+    if (args[0] === 'all') {
+      const e1 = new MessageEmbed()
+        .setTitle("Role")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}role <subcommand> >\`\`\`\n__**Permission:**__ \`ADMINISTRATOR\`\nModify roles`)
+        .addField("__Subcommands:__", "`add       :` Add role to a member\n`all       :` Add role to all members\n`bots      :` Add role to all bots\n`humans    :` Add role to all human members\n`info      :` Shows role information\n`random    :` Add role randomly to multiple members\n`rbots     :` Remove role from all bots\n`remove    :` Remove role from a member\n`rhumans   :` Remove role from all human members")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e2 = new MessageEmbed()
+        .setTitle("Emojify")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}emojify <message> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nEmojify your message`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e3 = new MessageEmbed()
+        .setTitle("Rate")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}rate <subcommand> [user] >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nRate someone!`)
+        .addField("__Subcommands:__", "`bad`, `clown`, `cute`, `furry`, `gay`, `good`, `hot`, `noob`, `pro`, `smart`, `tall`, `waifu`")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e4 = new MessageEmbed()
+        .setTitle("Reverse")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}reverse <message> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nReverse your message`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e5 = new MessageEmbed()
+        .setTitle("Truthordare")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}truthordare [user] >\`\`\`\n__**Aliases:**__ \`tod\`, \`td\`\n__**Cooldown:**__ \`5 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nPlay truth or dare`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e6 = new MessageEmbed()
+        .setTitle("Setonewordstory")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}setonewordstory [channel] >\`\`\`\n__**Alias:**__ \`setows\`\n__**Permission:**__ \`ADMINISTRATOR\`\nSet a one word story channel`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e7 = new MessageEmbed()
+        .setTitle("Setconfessionchannel")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}setconfessionchannel [channel] >\`\`\`\n__**Alias:**__ \`setconfess\`\n__**Permission:**__ \`ADMINISTRATOR\`\nSet a confession channel`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e8 = new MessageEmbed()
+        .setTitle("Animals")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}animals <subcommand> >\`\`\`\n__**Cooldown:**__ \`3 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\``)
+        .addField("__Subcommands:__", "`bird      :` Sends a bird image\n`cat       :` Sends a cat image\n`dog       :` Sends a dog image\n`fox       :` Sends a fox image\n`kangaroo  :` Sends a kangaroo image\n`koala     :` Sends a koala image\n`panda     :` Sends a panda image\n`redpanda  :` Sends a red panda image\n`shiba     :` Sends a shiba inu image")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e85 = new MessageEmbed()
+        .setTitle("Commands")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}commands >\`\`\`\n__**Cooldown:**__ \`30 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nShows all available commands`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e9 = new MessageEmbed()
+        .setTitle("Ghostping")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}ghostping <true/false> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nSet a ghost ping detector`)
+        .addField("__Subcommands:__", "`true      :` Enable ghost ping detector\n`false     :` Disable ghost ping detector")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e10 = new MessageEmbed()
+        .setTitle("Listemoji")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}listemoji >\`\`\`\n__**Cooldown:**__ \`10 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nShows all available emojis of the server`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e11 = new MessageEmbed()
+        .setTitle("Texttospeech")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}texttospeech <message> >\`\`\`\n__**Alias:**__ \`tts\`\n__**Cooldown:**__ \`15 seconds\`\n__**Permission:**__ \`MANAGE_MESSAGES\`\nSpeaks your message in vc`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e12 = new MessageEmbed()
+      .setAuthor({ name: `${client.user.username}` + " 's Help Menu", iconURL: `${client.user.displayAvatarURL({ dynamic: true })}` })
+      .setDescription(`\`\`\`xml\n<Usage : ${prefix}duplicate <messageID> >\`\`\`\n__**Alias:**__ \`clone\`\n__**Permission:**__ \`MANAGE_MESSAGES\`\nDuplicate an embed`)
+      .setColor(`${blank}`)
+      .setTimestamp()
+      
+      const e13 = new MessageEmbed()
+        .setTitle("Highlightuser")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}highlightuser <subcommand> >\`\`\`\n__**Alias:**__ \`highlight <subcommand>\`\n__**Permission:**__ \`ADMINISTRATOR\`\nHighlight a user.`)
+        .addField("__Subcommands:__", "`add       :` Add a user to your highlights\n`list      :` List all your highlighted users\n`remove    :` Remove a highlighted user from your highlights")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      const e14 = new MessageEmbed()
+        .setTitle("Time")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}time [subcommand] >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nDisplay current time and set timezone`)
+        .addField("__Subcommands:__", "`me        :` Set your timezone ([check here](https://whatismyti.me/))\n`<user>    :` Check someone's timezone")
+        .setColor(`${blank}`)
+        .setTimestamp()
+
+      const embs = [e1, e2, e3, e4, e5, e6, e7, e8, e85, e9, e10, e11, e12, e13, e14]
+      paginate(message, embs)
+    } 
+    else if (args[0] === 'role') {
+
+      const e1 = new MessageEmbed()
+        .setTitle("Role")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}role <subcommand> >\`\`\`\n__**Permission:**__ \`ADMINISTRATOR\`\nModify roles`)
+        .addField("__Subcommands:__", "`add       :` Add role to a member\n`all       :` Add role to all members\n`bots      :` Add role to all bots\n`humans    :` Add role to all human members\n`info      :` Shows role information\n`random    :` Add role randomly to multiple members\n`rbots     :` Remove role from all bots\n`remove    :` Remove role from a member\n`rhumans   :` Remove role from all human members")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({ embeds: [e1] })
+    }
+    else if (args[0] === 'emojify') {
+      const e2 = new MessageEmbed()
+        .setTitle("Emojify")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}emojify <message> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nEmojify your message`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e2]})
+    }
+    else if (args[0] === 'rate') {
+      const e3 = new MessageEmbed()
+        .setTitle("Rate")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}rate <subcommand> [user] >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nRate someone!`)
+        .addField("__Subcommands:__", "`bad`, `clown`, `cute`, `furry`, `gay`, `good`, `hot`, `noob`, `pro`, `smart`, `tall`, `waifu`")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e3]})
+    }
+    else if (args[0] === 'reverse') {
+      const e4 = new MessageEmbed()
+        .setTitle("Reverse")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}reverse <message> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nReverse your message`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e4]})
+    }
+    else if (args[0] === 'truthordare') {
+      const e5 = new MessageEmbed()
+        .setTitle("Truthordare")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}truthordare [user] >\`\`\`\n__**Aliases:**__ \`tod\`\n__**Cooldown:**__ \`5 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nPlay truth or dare`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e5]})
+    }
+    else if (args[0] === 'setonewordstory') {
+      const e6 = new MessageEmbed()
+        .setTitle("Setonewordstory")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}setonewordstory [channel] >\`\`\`\n__**Alias:**__ \`setows\`\n__**Permission:**__ \`ADMINISTRATOR\`\nSet a one word story channel`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e6]})
+    }
+    else if (args[0] === 'setconfessionchannel') {
+      const e7 = new MessageEmbed()
+        .setTitle("Setconfessionchannel")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}setconfessionchannel [channel] >\`\`\`\n__**Alias:**__ \`setconfess\`\n__**Permission:**__ \`ADMINISTRATOR\`\nSet a confession channel`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e7]})
+    }
+    else if (args[0] === 'animals') {
+      const e8 = new MessageEmbed()
+        .setTitle("Animals")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}animals <subcommand> >\`\`\`\n__**Cooldown:**__ \`3 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\``)
+        .addField("__Subcommands:__", "`bird      :` Sends a bird image\n`cat       :` Sends a cat image\n`dog       :` Sends a dog image\n`fox       :` Sends a fox image\n`kangaroo  :` Sends a kangaroo image\n`koala     :` Sends a koala image\n`panda     :` Sends a panda image\n`redpanda  :` Sends a red panda image\n`shiba     :` Sends a shiba inu image")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e8]})
+    }
+    else if (args[0] === 'commands') {
+      const e85 = new MessageEmbed()
+        .setTitle("Commands")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}commands >\`\`\`\n__**Cooldown:**__ \`30 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nShows all available commands`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e85]})
+    }
+    else if (args[0] === 'ghostping') {
+      const e9 = new MessageEmbed()
+        .setTitle("Ghostping")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}ghostping <true/false> >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nSet a ghost ping detector`)
+        .addField("__Subcommands:__", "`true      :` Enable ghost ping detector\n`false     :` Disable ghost ping detector")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e9]})
+    }
+    else if(args[0] === 'listemoji') {
+      const e10 = new MessageEmbed()
+        .setTitle("Listemoji")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}listemoji >\`\`\`\n__**Cooldown:**__ \`10 seconds\`\n__**Permission:**__ \`SEND_MESSAGES\`\nShows all available emojis of the server`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e10]})
+    }
+    else if(args[0] === 'texttospeech') {
+      const e11 = new MessageEmbed()
+        .setTitle("Texttospeech")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}texttospeech <message> >\`\`\`\n__**Alias:**__ \`tts\`\n__**Cooldown:**__ \`15 seconds\`\n__**Permission:**__ \`MANAGE_MESSAGES\`\nSpeaks your message in vc`)
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e11]})
+    }
+    else if(args[0] === 'duplicate') {
+    const e12 = new MessageEmbed()
+      .setAuthor({ name: `${client.user.username}` + " 's Help Menu", iconURL: `${client.user.displayAvatarURL({ dynamic: true })}` })
+      .setDescription(`\`\`\`xml\n<Usage : ${prefix}duplicate <messageID> >\`\`\`\n__**Alias:**__ \`clone\`\n__**Permission:**__ \`MANAGE_MESSAGES\`\nDuplicate an embed`)
+      .setColor(`${blank}`)
+      .setTimestamp()
+    message.channel.send({ embeds: [e12] })
+    }
+    else if (args[0] === 'highlightuser') {
+
+      const e13 = new MessageEmbed()
+        .setTitle("Highlightuser")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}highlightuser <subcommand> >\`\`\`\n__**Alias:**__ \`highlight <subcommand>\`\n__**Permission:**__ \`ADMINISTRATOR\`\nHighlight a user.`)
+        .addField("__Subcommands:__", "`add       :` Add a user to your highlights\n`list      :` List all your highlighted users\n`remove    :` Remove a highlighted user from your highlights")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({ embeds: [e13] })
+    }
+    else if (args[0] === 'time') {
+      const e14 = new MessageEmbed()
+        .setTitle("Time")
+        .setDescription(`\`\`\`xml\n<Usage : ${prefix}time [subcommand] >\`\`\`\n__**Permission:**__ \`SEND_MESSAGES\`\nDisplay current time and set timezone`)
+        .addField("__Subcommands:__", "`me        :` Set your timezone ([check here](https://whatismyti.me/))\n`<user>    :` Check someone's timezone")
+        .setColor(`${blank}`)
+        .setTimestamp()
+      message.channel.send({embeds: [e14]})
+    }
+
+  }
+}

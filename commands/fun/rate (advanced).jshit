@@ -1,0 +1,63 @@
+const { MessageEmbed } = require('discord.js')
+const { theme } = require('../../botconfig/main')
+const { prefix } = require('../../botconfig/main')
+module.exports = {
+    name: "rate",
+    description: "Rate someone",
+    permissions: ["SEND_MESSAGES"],
+
+    run: async (client, message, args) => {
+      const embedhelp = new MessageEmbed()
+      .setAuthor(client.user.username + " 's Help Menu", client.user.displayAvatarURL({ dynamic: true }))
+      .setDescription(`\`\`\`xml\n<Usage : ${prefix}rate <subcommand> >\`\`\`Rate someone!`)
+      .addField("__Subcommands:__", "`bad`, `clown`, `cute`, `furry`, `gay`, `good`, `hot`, `noob`, `pro`, `smart`, `straight`, `tall`, `waifu`")
+      .setColor(`${theme}`)
+      .setTimestamp()
+    if (!args[0]) return message.channel.send({ embeds: [embedhelp] })
+
+      /* const user = message.mentions.members.first() || message.guild.members.cache.get(args[0])
+      if(!user) return message.channel.send("You didn't mention someone to rate!")
+      if(user.id === message.member.id) return message.channel.send("You can't rate yourself LOL!") */
+      let grate = Math.floor(Math.random() * 100);
+
+    if(args[0] === 'bad') {
+      let user = message.mentions.users.first() || message.author
+      let z1 = Math.floor(Math.random() * 25) + 1
+      let z2 = Math.floor(Math.random() * 50) + 26
+      let z3 = Math.floor(Math.random() * 75) + 51
+      let z4 = Math.floor(Math.random() * 100) + 76
+      let rate = Math.floor(Math.random() * 100)
+      let output;
+                try {
+                  if(rate === Math.floor(Math.random() * 25) + 1) {
+                    output = `${user.username} is **${rate}%** bad! <a:dd_yayy:950555450594701322>`
+                  }
+                  if(rate === Math.floor(Math.random() * 50) + 26) {
+                    output = `${user.username} is **${rate}%** bad! <:MaybeNV:996114782920917072>`
+                  }
+                  if(rate === Math.floor(Math.random() * 75) + 51) {
+                    output = `${user.username} is **${rate}%** bad! <a:chikashook:891257293587480596>`
+                  }
+                  if(rate === z4) {
+                    output = `${user.username} is **${rate}%** bad! <a:awkwardkid:813553777709809664>`
+                  }
+                    } catch (e) {
+      console.error(e)
+    }
+  let embed = new MessageEmbed()
+  .setTitle(client.user.username + " rate machine")
+  .setColor(message.author.displayHexColor)
+  .setDescription(`${output}`);
+  message.channel.send({ embeds: [embed] })
+    }
+
+
+      
+    }
+}
+
+function rand(min, max) {
+        min = Math.min(min, max);
+        max = Math.max(max, min);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }

@@ -1,0 +1,31 @@
+const { MessageEmbed } = require('discord.js')
+const schema = require("../../schemas/sameletter")
+
+module.exports = {
+    name: "sameletter",
+    description: "Play a same letter word game",
+    permissions: ["MANAGE_MESSAGES"],
+
+    run: async (client, message, args) => {
+      let data;
+    try {
+      data = await schema.findOne({
+        channelId: message.channel.id,
+        guildId: message.guild.id,
+      })
+      if(data) return;
+      if(!data) {
+            data = await schema.create({
+                channelId: message.channel.id,
+                guildId: message.guild.id,
+                time: Date.now()
+            })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+
+    data.able = true
+    await data.save();
+    }
+}

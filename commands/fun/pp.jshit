@@ -1,0 +1,53 @@
+const { MessageEmbed } = require('discord.js')
+const { theme } = require('../../botconfig/main')
+
+module.exports = {
+    name: "pp",
+    description: "pp size",
+    permissions: ["SEND_MESSAGES"],
+
+    run: async (client, message, args) => {
+
+    if(message.author.bot) return;
+  
+  let pp = [
+    '8D',
+    '8=D',
+    '8==D',
+    '8===D',
+    '8====D',
+    '8=====D',
+    '8======D',
+    '8=======D',
+    '8========D',
+    '8=========D',
+    '8==========D',
+    '8===========D',
+    '8============D',
+    '8=============D',
+    '8==============D',
+    '8===============D',
+    '8================D',
+    '8=================D',
+    '8==================D',
+    '8===================D',
+    '8====================D',
+    '8=====================D',
+    '8======================D',
+    '8=======================D',
+    '8========================D',
+    '8=========================D',
+    '8==========================D',
+    '8===========================D'
+];
+  
+  let user = message.mentions.users.first() || message.author
+  
+  let embed = new MessageEmbed()
+  .setTitle("Peepee size machine")
+  .setColor(`${theme}`)
+  .setDescription(`${user.username}'s pp\n${pp[Math.floor(Math.random() * pp.length)]}`);
+
+  message.channel.send({ embeds: [embed] })
+}
+    }

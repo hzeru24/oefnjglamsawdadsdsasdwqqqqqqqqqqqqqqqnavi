@@ -1,0 +1,24 @@
+const { MessageEmbed } = require('discord.js')
+const { theme } = require('../../botconfig/main')
+
+module.exports = {
+    name: "howgay",
+    description: "howgay",
+    permissions: ["SEND_MESSAGES"],
+
+    run: async (client, message, args) => {
+
+    if(message.author.bot) return;
+  
+  let rate = Math.floor(Math.random() * 100);
+  
+  let user = message.mentions.users.first() || message.author
+  
+  let embed = new MessageEmbed()
+  .setTitle("Gay rate machine")
+  .setColor(`${theme}`)
+  .setDescription(`**${user.username}** is ` + rate + "% gay:rainbow_flag:");
+
+  message.channel.send({ embeds: [embed] })
+}
+    }
