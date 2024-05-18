@@ -1,0 +1,15 @@
+module.exports = {
+  name: "numlet",
+  run: async(client, message, args) => {
+    num = args[0]
+    var d = require("../../schemas/dictionary2.json")
+/*
+    const regex = new RegExp(`^[a-z]{${num}}$`, "i")
+    
+    console.log((d.find(regex)))
+*/
+    var ler = d.match(/[^A-Z]/gi, "")
+
+    console.log(ler)
+  }
+}

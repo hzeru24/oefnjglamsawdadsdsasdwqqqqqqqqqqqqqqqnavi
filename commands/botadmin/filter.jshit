@@ -1,0 +1,41 @@
+const { MessageEmbed, MessageActionRow, MessageButton } = require("discord.js")
+const trivia = require("../../json/triviass.json")
+module.exports = {
+  name: "trivia",
+  permissions: ["MANAGE_MESSAGES"],
+  run: async (client, message, args) => {
+
+    const id = args[0]
+    if (isNaN(id)) return message.reply({ content: "Please provide a valid message ID", repliedUser: false }).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 10000)
+    })
+
+    const msg = await message.channel.messages.fetch(id);
+    if (!msg) return message.reply({ content: "Please provide a valid message ID", repliedUser: false }).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 10000)
+    })
+
+    const ed = msg.embeds[0].description.match(/(?<=\*{2}).*?(?=\*{2})/g);
+    //"([^"]*)" ;; \*{2}(.*)\*{2}  /\*{2}([^\*{2}]*)\*{2}/g
+    const an = trivia.find((obj) => obj.question === `${ed}`)
+    const ane = an.correct_answer
+    if(!an) return message.channel.send("I was unable to answer the question from that trivia. Maybe use your brain sometimes.")
+    if(!ane) return message.channel.send("I was unable to answer the question from that trivia. Maybe use your brain sometimes.")
+    
+
+    
+   /* function answer(){ trivia.find((val) => (val.question.toLowerCase()) === )} */
+     
+     const newEmbed = new MessageEmbed()
+     .setTitle(`${ed}`)
+     .setColor(msg.embeds[0].color)
+
+    message.channel.send({content: `**__Answer:__** ${ane}`, embeds: [newEmbed]})
+
+    // ⚫
+  }
+}

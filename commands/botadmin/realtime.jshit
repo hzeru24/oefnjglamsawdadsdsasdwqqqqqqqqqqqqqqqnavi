@@ -1,0 +1,18 @@
+const { MessageEmbed } = require('discord.js')
+  
+module.exports = {
+  name: "time", 
+  run: async (client, message, args) => {
+ const e = setInterval(myTimer, 1000);
+    
+ const unixTime = Math.floor(Date.now() / 1000);
+    const tt =`<t:${unixTime}:t>`
+    message.channel.send(`The current time is ${tt}\n${new Date()}`);
+  
+
+function myTimer(message) {
+  const date = new Date();
+  message = date.toLocaleTimeString();
+}
+  }
+}

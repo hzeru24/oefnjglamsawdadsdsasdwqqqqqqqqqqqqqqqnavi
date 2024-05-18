@@ -1,0 +1,71 @@
+const { Client, Message, MessageEmbed } = require('discord.js');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource } = require('@discordjs/voice');
+const { getVoiceConnection } = require('@discordjs/voice');
+const path = require('path','ffmpeg-static');
+
+module.exports = {
+    name: 'antihero',
+    developersOnly: true,
+    /** 
+     * @param {Client} client 
+     * @param {Message} message 
+     * @param {String[]} args 
+     */
+    run: async(client, message, args) => {
+        
+      const channel = message.member.voice.channel;
+	  const botchannel = getVoiceConnection(message.guild.me.voice.channel);
+	  if(!channel) 
+		  return message.channel.send(new MessageEmbed()
+		  .setColor('#fc8eac')
+		  .setTitle(`You need to be in voice channel!`)
+		  ).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 3000)
+    })
+	  if(botchannel)
+		  return message.channel.send(new MessageEmbed()
+		  .setColor('#fc8eac')
+		  .setTitle(`I am already connected in \`<#${botchannel.id}>\``)
+	  ).then((msg) => {
+      setTimeout(() => {
+        msg.delete();
+      }, 3000)
+    })
+      await message.react('🔊').catch(()=>{})
+        joinVoiceChannel({
+            channelId: message.member.voice.channel.id,
+            guildId: message.guild.id,
+            adapterCreator: message.guild.voiceAdapterCreator
+        })
+      const connection = getVoiceConnection(channel.guild.id);
+
+        const player = createAudioPlayer()
+        const resource = createAudioResource(path.join(__dirname, './antihero.mp3'))
+
+        connection.subscribe(player)
+
+        player.play(resource)
+
+      setInterval(() => {
+        const connection = getVoiceConnection(channel.guild.id);
+
+        const player = createAudioPlayer()
+        const resource = createAudioResource(path.join(__dirname, './antihero.mp3'))
+
+        connection.subscribe(player)
+
+        player.play(resource)
+
+        const em = new MessageEmbed()
+                    .setAuthor('Anti-Hero - Taylor Swift')
+                    .setDescription('`❚❚` ▬▬▬▬▬▬▬▬▬▬▬▬ `00:00 / 03:21`')
+                    .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+        
+        message.channel.send({embeds: [em]})
+      
+      }, 210000)
+      message.delete() 
+    }
+ }
