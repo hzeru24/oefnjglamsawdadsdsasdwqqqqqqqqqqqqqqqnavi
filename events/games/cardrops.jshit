@@ -1,0 +1,86 @@
+const { Client, GatewayIntentBits, MessageActionRow, MessageButton, MessageEmbed } = require('discord.js');
+const client = require('../../index.js')
+const prefix = 'r!'; // Change this to your desired prefix
+
+const cards = [
+  { id: 'card1', name: 'Gojo Satoru', image: 'https://images-ext-1.discordapp.net/external/uQQe2WGSkKbuQsx4B1uWx5EVdKfFgTFkcLgNLgVSv0Q/%3Fu%3D1666380602459/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/gojo-satoru-4.jpg?width=409&height=567' },
+  { id: 'card2', name: 'Kanna Kamui', image: 'https://images-ext-1.discordapp.net/external/p2d2QFT-LSNukSTSOSHQ6aX35Ko8HtbuIXAUST9gDAY/%3Fu%3D1648695760463/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/versioned/kanna-kamui-2-1.jpg?width=409&height=567' },
+  { id: 'card3', name: 'Jinx', image: 'https://images-ext-1.discordapp.net/external/FLpTgg7JLr1IBHazqtfLBmVNlA0p61bu_pL6EUcuIwg/%3Fu%3D1637616043759/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/jinx-3.jpg?width=409&height=567' },
+  { id: 'card4', name: 'Kobeni Higashiyama', image: 'https://images-ext-2.discordapp.net/external/BecC9f9Rod71ViFzoDw7T0_RiSjKaMyZss9svzcnWuI/%3Fu%3D1680547731472/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/kobeni-higashiyama-2.jpg?width=409&height=567' },
+  { id: 'card5', name: 'Power', image: 'https://images-ext-1.discordapp.net/external/x5V_DWYqN1DibAzRwgewPkFGBEJdUXQaOm1LUU7OGPc/%3Fu%3D1680547731472/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/power-2.jpg?width=409&height=567' },
+  { id: 'card6', name: 'Jolyne Cujoh', image: 'https://images-ext-2.discordapp.net/external/d-MQ-t8IwI8CcZqYp3nrsU1Awv9i5MwbdNRKz4nYzCo/%3Fu%3D1665685081081/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/versioned/jolyne-cujoh-5-1.jpg?width=409&height=567' },
+  { id: 'card7', name: 'Marin Kitagawa', image: 'https://images-ext-1.discordapp.net/external/-E02wZFVHwEz6Hm3DUNGZdUGB_7C8oA2Ncb_mCrUI5s/%3Fu%3D1649197656482/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/marin-kitagawa-5.jpg?width=409&height=567' },
+  { id: 'card8', name: 'Hu Tao', image: 'https://images-ext-2.discordapp.net/external/9IEWPQ13Wsa-7x_OVMzlFw3Iw1zaD_wG8pWiyYpJKqI/%3Fu%3D1673727610681/http/d2l56h9h5tj8ue.cloudfront.net/images/cards/hu-tao-3.jpg?width=409&height=567' },
+  // Add more cards here
+];
+
+const cardMap = new Map(cards.map(card => [card.id, card]));
+
+const userCards = new Map(); // Store collected cards for each user
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}`);
+  startRandomDrops();
+});
+
+async function startRandomDrops() {
+  const channelId = '892176134794522688'; // Replace with the desired channel ID
+  const intervalTime = 10000; // Time interval in milliseconds (1 hour)
+  
+  const channel = await client.channels.fetch(channelId);
+  
+  
+  setInterval(() => {
+    const randomCard = cards[Math.floor(Math.random() * cards.length)];
+    
+    const embed = new MessageEmbed()
+      .setTitle('Card Drop!')
+      .setDescription(`A card has dropped!\nType \`!collect ${randomCard.id}\` to collect it!`)
+      .addField('Card Name', randomCard.name)
+      .setImage(randomCard.image);
+
+    channel.send({ embeds: [embed] });
+  }, intervalTime);
+}
+
+client.on('interactionCreate', async interaction => {
+  if (!interaction.isButton()) return;
+
+  const userId = interaction.user.id;
+  const collectedCards = userCards.get(userId) || [];
+
+  if (interaction.customId.startsWith('collect')) {
+    const cardId = interaction.customId.split('-')[1];
+    if (!collectedCards.includes(cardId)) {
+      collectedCards.push(cardId);
+      userCards.set(userId, collectedCards);
+      await interaction.update({ content: `You've collected the card!`, components: [] });
+    } else {
+      await interaction.update({ content: `You've already collected this card!`, components: [] });
+    }
+  }
+});
+
+client.on('messageCreate', async message => {
+  if (message.author.bot) return;
+  if (!message.content.startsWith(prefix)) return;
+
+  const args = message.content.slice(prefix.length).trim().split(/ +/);
+  const command = args.shift().toLowerCase();
+
+  if (command === 'mycards') {
+    const userId = message.author.id;
+    const collectedCards = userCards.get(userId) || [];
+    
+    const cardList = collectedCards.map(cardId => {
+      const card = cardMap.get(cardId);
+      return `${card.name} - [Image](${card.image})`;
+    }).join('\n');
+
+    const embed = new MessageEmbed()
+      .setTitle(`${message.author.tag}'s Collected Cards`)
+      .setDescription(cardList || 'No cards collected yet');
+
+    await message.reply({ embeds: [embed] });
+  }
+});
