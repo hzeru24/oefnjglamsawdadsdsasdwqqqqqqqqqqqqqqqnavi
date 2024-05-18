@@ -1,0 +1,24 @@
+/*
+const { MessageEmbed, Modal, TextInputComponent, MessageActionRow } = require("discord.js");
+
+module.exports = {
+    name: "modal",
+    description: "Replies with a modal menu!",
+    run: async (client, interaction, args) => {
+        const modal = new Modal()
+            .setCustomId('myModal')
+            .setTitle('My Modal');
+
+        const something = new TextInputComponent()
+            .setCustomId('something')
+            .setLabel("Type anything here")
+            .setStyle("LONG");
+
+        const ActionRow = new MessageActionRow().addComponents(something);
+
+        modal.addComponents(ActionRow);
+
+        await interaction.showModal(modal);
+    },
+};
+*/

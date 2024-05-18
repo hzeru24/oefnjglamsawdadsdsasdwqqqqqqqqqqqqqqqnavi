@@ -1,0 +1,155 @@
+const { MessageButton, MessageActionRow } = require('discord.js');
+const { sleep, randomInArray } = require('../../utils/misc');
+
+const time = 30 * 1000;
+const one = 60 * 1000;
+
+module.exports = {
+  name: "petrace",
+  description: "Start a pet race event!",
+  options: [
+    {
+      name: "prize",
+      type: "STRING",
+      description: "The prize for the event",
+      required: true,
+    },
+  ],
+  run: async (client, interaction, args) => {
+    await interaction.deferReply();
+
+    if (!interaction.member.permissions.has('MANAGE_MESSAGES') && !interaction.member.roles.cache.some((r) => r.name === "Staff")) {
+      return interaction.editReply({
+        content: 'You don\'t have permissions to start the event.',
+        ephemeral: true
+      });
+    }
+    
+    const prize = interaction.options.getString('prize', true);
+    const joinButton = new MessageButton()
+      .setCustomId('join_race')
+      .setStyle('SUCCESS')
+      .setLabel('JOIN');
+
+    const message = await interaction.editReply({
+      embeds: [
+        {
+          title: 'Pet Race!',
+          description:
+            'Click the **`JOIN`** button to join the Pet Race event. Multiple players will be participating. There will be one button for everyone to click. The participants must click the button as fast as possible. Whoever finishes the race first wins!',
+          fields: [
+            {
+              name: 'Prize',
+              value: prize,
+              inline: true,
+            },
+          ],
+          footer: {
+            text: 'Ends in 30 seconds!',
+          },
+        },
+      ],
+      components: [new MessageActionRow().addComponents(joinButton)],
+    });
+
+    const collector = await message.createMessageComponentCollector({
+      componentType: 'BUTTON',
+      time,
+    });
+
+    const alreadyJoined = new Set();
+    let participants = [];
+
+    collector.on('collect', async (click) => {
+      if (!alreadyJoined.has(click.user.id)) {
+        alreadyJoined.add(click.user.id);
+        participants.push(click.user);
+        await click.reply({
+          content: 'Successfully joined, good luck!',
+          ephemeral: true,
+        });
+      } else {
+        await click.reply({
+          content: "You've already joined this pet race session!",
+          ephemeral: true,
+        });
+      }
+    });
+
+    collector.on('end', async (collected) => {
+      await message.edit({
+        content: `**Event ended** and **\`${participants.length} people\`** joined!`,
+        components: [
+          new MessageActionRow().addComponents(joinButton.setDisabled(true)),
+        ],
+      });
+      if (participants.length <= 1) {
+        return interaction.followUp('Not enough people joined the event...');
+      }
+    });
+
+    await sleep(time);
+
+    const winner = randomInArray(participants);
+
+    if (!winner) {
+      return null;
+    }
+
+    const finishLine = '🏁';
+    const positions = participants.reduce((result, user, index) => {
+      const position = result.position + index + 1;
+      result.text += `${position === 1 ? finishLine : ''} ${position}. **${user.tag}**\n`;
+      return result;
+    }, { position: 1, text: '' }).text;
+
+    const componentsArray = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            style: 'PRIMARY',
+            custom_id: 'race_button',
+            label: 'CLICK ME!',
+          },
+        ],
+      },
+    ];
+
+    const prompt = await interaction.channel.send({
+      content: positions,
+      components: componentsArray,
+    });
+
+    const choiceCollector = await prompt.createMessageComponentCollector({
+      componentType: 'BUTTON',
+      time: one,
+    });
+
+    choiceCollector.on('collect', async (click) => {
+      if (click.customId === 'race_button' && participants.includes(click.user)) {
+        participants = participants.filter(user => user !== click.user);
+        if (participants.length === 0) {
+          choiceCollector.stop();
+          interaction.followUp(`GG! <@${click.user.id}> won the race!`);
+        } else {
+          click.reply({
+            content: 'You clicked the button! Keep going!',
+            ephemeral: true,
+          });
+        }
+      }
+    });
+
+    choiceCollector.on('end', async () => {
+      await prompt.edit({
+        components: [
+          new MessageActionRow().addComponents(
+            componentsArray[0].components[0].setDisabled(true)
+          ),
+        ],
+      });
+    });
+  },
+};

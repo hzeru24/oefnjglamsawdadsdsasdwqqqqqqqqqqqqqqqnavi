@@ -1,0 +1,57 @@
+const { Client, CommandInteraction, MessageEmbed, MessageButton, MessageActionRow } = require('discord.js');
+module.exports = {
+  name: 'eve',
+  description: 'Start an event',
+  options: [
+    {
+      type: "STRING",
+      name: 'event',
+      description: 'what is the event',
+      required: true,
+
+    },
+    {
+      type: "STRING",
+      name: 'prize',
+      description: 'Prize for the event',
+      required: true,
+
+    },
+    {
+      type: "USER",
+      name: 'sponsor',
+      description: 'Sponsor of the event',
+      required: false,
+
+    },
+    {
+      type: "STRING",
+      name: 'message',
+      description: 'Message of the sponsor/host',
+      required: false,
+
+    },
+  ],
+  /**
+   * @param {Client} client
+   * @param {CommandInteraction} interaction
+   * @param {String[]} args
+   */
+  run: async (client, interaction, args) => {
+    await interaction.deferReply({ ephemeral: true });
+    const event = interaction.options.getString('event');
+    const prize = interaction.options.getString('prize');
+    const sponsor = interaction.options.getUser('sponsor') || interaction.user;
+    const message = interaction.options.getString('message') || " ";
+    const chan = interaction.client.channels.cache.get("976303162451439676")
+    const em = new MessageEmbed()
+    .setTitle("Event!!!")
+    .setDescription(`**Event:** ${event}\n**Prize:** ${prize}\n**Sponsor:** ${sponsor}`)
+
+    interaction.followUp("Event will start in <#839482755062693959>!")
+    interaction.channel.send({content: `@ping ${message}`,embeds: [em]})
+    chan.send({content: `@ping ${message}`,embeds: [em], allowedMentions: { "users" : [], "roles": []}})
+
+    
+  }
+}
