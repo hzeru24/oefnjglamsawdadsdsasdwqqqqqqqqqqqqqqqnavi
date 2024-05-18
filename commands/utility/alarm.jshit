@@ -1,0 +1,20 @@
+const paginate = require("../../function/pagination")
+const {MessageActionRow, MessageButton, MessageEmbed, Collection} = require("discord.js") 
+const { blank } = require("../../botconfig/main.json")
+
+module.exports = {
+  name: "alarm",
+  timeout: 5,
+  permissions: ["ADMINISTRATOR"],
+  run: async(client, message, args) => {
+    const row = new MessageActionRow()
+      .addComponents(
+        new MessageButton()
+          .setCustomId('start')
+          .setLabel('Start Timer')
+          .setStyle('PRIMARY')
+      );
+
+    message.reply({ content: 'Click the button below to start the alarm timer:', components: [row] });
+  }
+}
